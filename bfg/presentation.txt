@@ -1,0 +1,291 @@
+=======================================
+BFG: a Python web application framework
+=======================================
+
+:Author: Daniel Nouri
+:Contact: daniel.nouri@gmail.com
+:Date: |date|
+
+.. include:: <s5defs.txt>
+.. |date| date::
+.. contents::
+
+Intro
+=====
+
+- a web application framework
+- best on WSGI
+
+Intro (2)
+=========
+
+- simple
+- fun
+- minimalist
+- documented
+- speedy
+
+Intro (3)
+=========
+
+A minimal BFG application (1/2)::
+
+  from webob import Response
+
+  def hello_world(request):
+      return Response('Hello world!')
+
+  def goodbye_world(request):
+      return Response('Goodbye world!')
+
+Intro (4)
+=========
+
+A minimal BFG application (2/2)::
+
+  from paste.httpserver import serve
+  from repoze.bfg.configuration import Configurator
+
+  if __name__ == '__main__':
+      config = Configurator()
+      config.begin()
+      config.add_view(hello_world)
+      config.add_view(goodbye_world, name='goodbye')
+      config.end()
+      app = config.make_wsgi_app()
+      serve(app)
+
+Intro (5)
+=========
+
+- ``hello_world`` is a *default view*; default views have empty names
+  ``''``
+- ``goodbye_world`` is registered with the ``goodbye`` name
+- our app has one root object at this point; it's located at ``/``
+
+Registration
+============
+
+- our minimal example uses imperative registration
+- imperative registration is easier to understand
+- declarative registration, however, is what we use for bigger apps
+- declarative registration uses ZCML
+
+Registration (2)
+================
+
+::
+
+  <configure xmlns="http://namespaces.repoze.org/bfg">
+    <include package="repoze.bfg.includes"
+             file="configure.zcml" />
+
+    <view view="helloworld.hello_world" />
+    <view name="goodbye"
+          view="helloworld.goodbye_world" />
+  </configure>
+
+Registration (3)
+================
+
+Now instead of configuring the views imperatively in Python, we load
+the declarative ZCML::
+
+  ...
+  config.begin()
+  config.load_zcml('configure.zcml')
+  config.end()
+  ...
+
+Registration (4)
+================
+
+Decorators allow configuration very close to the code that they
+configure::
+
+  from repoze.bfg.view import bfg_view
+  from webob import Response
+
+  @bfg_view(name='hello', request_method='GET')
+  def hello(request):
+      return Response('Hello')
+
+Registration (5)
+================
+
+To turn these decorators into configuration, we need to **scan** the
+package::
+
+  <configure xmlns="http://namespaces.repoze.org/bfg">
+    <include package="repoze.bfg.includes" />
+
+    <scan package="." />
+    <!-- ... -->
+
+  </configure>
+
+paster create
+=============
+
+- ``paster create`` is a tool to create project skeletons
+- projects will be packages: easier to extend, easier to distribute
+
+paster create (2)
+=================
+
+- create a new virtual environment
+- install repoze.bfg
+- run ``bin/paster create -t bfg_starter``
+
+paster create (3)
+=================
+
+We now have:
+
+- ``MyProject/setup.py`` to install and distribute your app
+- ``MyProject/MyProject.ini``: a Paste Deployment conf file
+- ``MyProject/myproject``: the project package
+
+paster create (4)
+=================
+
+To install your new app into your environment, do::
+
+  cd MyProject
+  ../bin/python setup.py develop
+
+paster create (5)
+=================
+
+To run our new app, do::
+
+  ../bin/paster serve MyProject.ini
+
+Use the reload option during development::
+
+  ../bin/paster serve --reload MyProject.ini
+
+paster create (6)
+=================
+
+::
+
+  MyProject/
+  |-- CHANGES.txt
+  |-- README.txt
+  |-- myproject
+  |   |-- __init__.py
+  |   |-- configure.zcml
+  |   |-- models.py
+  |   |-- run.py
+  |   |-- templates
+  |   |   |-- mytemplate.pt
+  |   |   `-- static/
+  |   |-- tests.py
+  |   `-- views.py
+  |-- MyProject.ini
+  `-- setup.py
+
+Traversal
+=========
+
+- use an object graph
+- like a filesystem with folders and files
+- allows for "row-level" security
+- more complex than...
+
+URL dispatch
+============
+
+- examples: ``archives/:year/:month/:day``, ``members/:membername``
+- doesn't work with arbitrary-depth hierarchies
+- more straight-forward
+
+Traversal (2)
+=============
+
+- ``myproject.models.get_root`` is our root factory
+- it's where the object graph starts
+- it's like ``/`` on a unix filesystem
+- uses ``__getitem__``
+
+Models
+======
+
+- a model is a simple Python class
+- models are usually persisted
+- views are registered for a context (model)
+- BFG has a default root model
+
+Models (2)
+==========
+
+::
+
+  class BlogEntry(object):
+      def __init__(self, title, body, author):
+          self.title = title
+          self.body =  body
+          self.author = author
+          self.created = datetime.datetime.now()
+
+A simple user DB
+================
+
+- add a UserDB model in ``models.py``
+- add methods ``list``, ``add_user``, and ``remove_user``
+- use the UserDB model as the root
+
+A simple user DB (2)
+====================
+
+- add views for each operation in ``views.py``
+- configure the views in ``configure.zcml``
+- use the JSON renderer
+
+A simple user DB (3)
+====================
+
+- allow location of the DB to be provided in the .ini file
+- in ``run.py``, pass this bit of configuration on to the UserDB class
+
+Security
+========
+
+- ``repoze.who`` does authentication, puts auth info into
+  ``REMOTE_USER`` and ``repoze.who.identity`` environment variables
+- BFG has an ACL authorization policy 
+
+Security (2)
+============
+
+- ACL means access control list
+- an ACL is composed of ACEs, access control entries
+
+Security (3)
+============
+
+An example of an ACL::
+
+  [
+   (Allow, Everyone, 'view'),
+   (Allow, 'group:editors', 'add'),
+   (Allow, 'group:editors', 'edit'),
+  ]
+
+repoze.shootout
+===============
+
+An app that demonstrates:
+
+- url dispatch
+- integration with repoze.who
+- integration with deliverance
+- SQLAlchemy based models
+
+repoze.shootout (2)
+===================
+
+::
+
+  svn co http://svn.repoze.org/repoze.shootout/trunk

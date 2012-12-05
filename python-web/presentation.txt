@@ -1,0 +1,499 @@
+=============================
+Modern Python web programming
+=============================
+
+:Author: Daniel Nouri
+:Contact: daniel.nouri@gmail.com
+:Date: |date|
+
+.. include:: <s5defs.txt>
+.. |date| date::
+.. contents::
+
+WSGI
+====
+
+- interface between web servers and web applications
+- pass around web requests
+- annotate request and add metadata
+
+WSGI (2)
+========
+
+- WSGI is an application and a server
+- application is a function that receives request and produces response
+
+WSGI (3)
+========
+
+A very simple application::
+
+  >>> def app(environ, start_response):
+  ...     start_response(
+  ...         '200 OK',
+  ...         [('Content-Type', 'text/plain')])
+  ...     return ['Hello World!']
+
+WSGI (4)
+========
+
+Let's make a WSGI server:
+
+First, install Paste_ into a new virtualenv_.
+
+.. _Paste: http://pypi.python.org/pypi/Paste
+.. _virtualenv: http://pypi.python.org/pypi/virtualenv
+
+WSGI (5)
+========
+
+Put our application function into a Python module, and add this code::
+
+  if __name__ == '__main__':
+      from paste import httpserver
+      httpserver.serve(
+          app, host='127.0.0.1', port='8080')
+
+WSGI (6)
+========
+
+``environ`` corresponds to the environment in a CGI request.
+
+- the ``Host:`` header is in ``environ['HTTP_HOST']``
+- ``environ['PATH_INFO']`` is the remaining path that the app should
+  interpret
+
+Exercise: WSGI
+==============
+
+Write an application that prints out all environment variables.  Look
+at the ``pprint`` module to make it look good.
+
+Exercise: WSGI (2)
+==================
+
+::
+
+  >>> import pprint
+  >>> def app(environ, start_response):
+  ...     start_response(
+  ...         '200 OK',
+  ...         [('Content-Type', 'text/plain')])
+  ...     return [pprint.pformat(environ)]
+
+
+Exercise: WSGI (3)
+==================
+
+Just a test::
+
+  >>> from webob import Request
+  >>> req = Request.blank('http://localhost/hello')
+  >>> resp = req.get_response(app)
+  >>> print resp
+  200 OK
+  Content-Type: text/plain
+  <BLANKLINE>
+  {'HTTP_HOST': 'localhost:80',
+   'PATH_INFO': '/hello',...
+
+Exercise: WSGI (4)
+==================
+
+Write a greeter application that uses part of the path for its output.
+Have http://127.0.0.1:8080/pedro display "Hello Pedro!"
+
+Exercise: WSGI (5)
+==================
+
+::
+
+  >>> def app(environ, start_response):
+  ...     start_response(
+  ...         '200 OK',
+  ...         [('Content-Type', 'text/plain')])
+  ...     name = environ['PATH_INFO'][1:]
+  ...     return ['Hello %s!' % name.title()]
+
+WebOb
+=====
+
+- WSGI itself is quite low level
+- WebOb_ is a library to create request and response objects
+
+.. _WebOb: http://pythonpaste.org/webob/
+
+WebOb (2)
+=========
+
+- WebOb has a simple server interface, it can act as a server
+- very useful for automated testing
+
+WebOb (3)
+=========
+
+::
+
+  >>> from webob import Request
+  >>> req = Request.blank('http://localhost/pedro')
+  >>> resp = req.get_response(app)
+  >>> print resp
+  200 OK
+  Content-Type: text/plain
+  <BLANKLINE>
+  Hello Pedro!
+
+Exercise: WSGI (6)
+==================
+
+Take a look at how we set up the server in our script:
+
+::
+
+  if __name__ == '__main__':
+      from paste import httpserver
+      httpserver.serve(
+          app, host='127.0.0.1', port='8080')
+
+Exercise: WSGI (7)
+==================
+
+- ``paste.urlparser.StaticURLParser`` is a WSGI app
+- make a script that uses it to display static HTML pages
+
+Exercise: WSGI (8)
+==================
+
+.. include:: code/static-url.py
+   :literal:
+
+WSGI middleware
+===============
+
+- a WSGI application can delegate to another WSGI application
+- it is then called middleware
+- middleware examples:
+
+  - authentication
+  - skinning
+  - developer tools: errors and profiling
+
+Commenter
+=========
+
+- we'll write a middleware that adds comments to any other WSGI
+  application
+- it adds them at the bottom of every HTML page that the application
+  serves
+- we'll use it with ``StaticURLParser`` to allow commenting of HTML
+  files
+
+Commenter (2)
+=============
+
+*Demo*
+
+Commenter (3)
+=============
+
+
+- every middleware wraps another application (``app``)
+- our middleware will store comments in a location
+- middleware is best created as a class: configuration in
+  ``__init__``, application in ``__call__``
+
+Commenter (4)
+=============
+
+We can eventually use this middleware like::
+
+  app = StaticURLParser(sys.argv[1])
+  app = Commenter(app, storage_dir='./comments')
+
+Commenter (5)
+=============
+
+.. include:: code/commenter/commenter1.py
+   :literal:
+
+Commenter (6)
+=============
+
+.. include:: code/commenter/commenter2.py
+   :literal:
+   :start-after: #STARTNEW
+
+Commenter (7)
+=============
+
+Remember how we used WebOb before to get a response from an app.
+
+.. include:: code/commenter/commenter3.py
+   :literal:
+   :start-after: #STARTNEW
+   :end-before: #ENDNEW
+
+Commenter (8)
+=============
+
+Let's add a bit of infrastructure for persisting comments.
+
+.. include:: code/commenter/commenter4.py
+   :literal:
+   :start-after: #STARTNEW
+   :end-before: #ENDNEW
+
+Commenter (9)
+=============
+
+We only want to filter *some* responses.  Those that are HTML and that
+aren't errors.
+
+.. include:: code/commenter/commenter5.py
+   :literal:
+   :start-after: #STARTNEW
+   :end-before: #ENDNEW
+
+Commenter (10)
+==============
+
+A simple method allows us to add stuff to the end of the page:
+
+.. include:: code/commenter/commenter6.py
+   :literal:
+   :start-after: #STARTNEW
+   :end-before: #ENDNEW
+
+Commenter (11)
+==============
+
+We can now use our ``add_to_end`` method:
+
+.. include:: code/commenter/commenter7.py
+   :literal:
+   :start-after: #STARTNEW
+   :end-before: #ENDNEW
+
+Commenter (12)
+==============
+
+A new  method to display existing comments:
+
+.. include:: code/commenter/commenter8.py
+   :literal:
+   :start-after: #STARTNEW
+   :end-before: #ENDNEW
+
+Exercise: Commenter
+===================
+
+You can see that ``format_comments`` expects a list of dicts, where
+each dict represents a comment.
+
+- introspect ``get_data`` to see the name of the file that it's trying
+  to open
+- use the standard ``pickle`` module to add a few comments to the
+  database manually
+- test
+
+Exercise: Commenter (2)
+=======================
+
+::
+
+  (Pdb) filename
+  'comments/http%3A%2F%2Flocalhost%3A8080%2F'
+  (Pdb) import time
+  (Pdb) comments = [{'homepage': u'http://uc.pt', ...}]
+  (Pdb) fi = open(filename, 'w')
+  (Pdb) pickle.dump(comments, fi)
+  (Pdb) fi.close()
+
+Commenter (13)
+==============
+
+Accept comments.  We use ``/.comments`` to submit to.
+
+.. include:: code/commenter/commenter9.py
+   :literal:
+   :start-after: #STARTNEW
+   :end-before: #ENDNEW
+
+Commenter (14)
+==============
+
+We add ``submit_form``.
+
+.. include:: code/commenter/commenter10.py
+   :literal:
+   :start-after: #STARTNEW
+   :end-before: #ENDNEW
+
+Commenter (15)
+==============
+
+Processing the submitted form.
+
+.. include:: code/commenter/commenter11.py
+   :literal:
+   :start-after: #STARTNEW
+   :end-before: #ENDNEW
+
+Paste Deployment
+================
+
+- a tool for system administrators to run WSGI applications
+- flexible configuration
+- install ``PasteScript`` and ``PasteDeploy``
+
+Paste Deployment (2)
+====================
+
+A minimal example.
+
+.. include:: code/commenter/commenter1.ini
+   :literal:
+
+Paste Deployment (3)
+====================
+
+A more involved example.
+
+.. include:: code/commenter/commenter2.ini
+   :literal:
+
+Paste Deployment (4)
+====================
+
+For our commenter middleware (filter) to work with Paste Deployment,
+we'll have to define a `factory function`_.
+
+.. include:: code/commenter/commenter12.py
+   :literal:
+   :start-after: #STARTNEW
+   :end-before: #ENDNEW
+
+.. _factory function: http://pythonpaste.org/deploy/#defining-factories
+
+Paste Deployment (5)
+====================
+
+We'll also make our commenter app an egg by adding a ``setup.py``.
+
+.. include:: code/commenter/setup.py
+   :literal:
+
+Exercise: Paste Deployment
+==========================
+
+- with your virtualenv's Python, run ``python setup.py develop``
+  against your new setup.py file.
+- then serve your .ini file with ``paster serve``
+
+Exercise: Paste Deployment (2)
+==============================
+
+- write a simple app using WebOb that returns metadata about
+  filesystem files using ``os.stat``
+- ``http://localhost:8080/index.html`` -> output information about
+  ``index.html`` in the given ``document_root``
+
+Exercise: Paste Deployment (3)
+==============================
+
+- finally, add a Paste application factory
+- and add to your Paste Deploy configuration
+
+Exercise: Paste Deployment (4)
+==============================
+
+- start out with a minimal example of a WebOb app
+- use ``pdb`` to look at request and response interactively
+
+Exercise: Paste Deployment (5)
+==============================
+
+::
+
+  import webob
+
+  class MetadataApp(object):
+      def __init__(self, document_root):
+          self.document_root = document_root
+
+      def __call__(self, environ, start_response):
+          req = webob.Request(environ)
+          resp = webob.Response('Hello!')
+          import pdb; pdb.set_trace()
+          return resp(environ, start_response)
+
+Exercise: Paste Deployment (6)
+==============================
+
+.. include:: code/metadata/metadata.py
+   :literal:
+
+repoze.who
+==========
+
+- `repoze.who`_ is a middleware for authentication
+- has plug-ins for basic auth, htpasswd, SQL, LDAP and more
+- easy install!
+
+.. _repoze.who: http://static.repoze.org/whodocs
+
+Exercise: repoze.who
+====================
+
+- make a copy of your Paste Deployment .ini file
+
+.. include:: code/metadata/metadata.ini
+   :literal:
+
+Exercise: repoze.who (2)
+========================
+
+- explore the `repoze.who docs`_
+- find out how to add and configure:
+
+  - the ``basicauth`` plug-in for identification and challenge
+  - the ``htpasswd`` plug-in for authentication
+
+.. _repoze.who docs: http://static.repoze.org/whodocs/narr.html#middleware-configuration-via-config-file
+
+Exercise: repoze.who (3)
+========================
+
+- require authentication for the metadata app
+- this is what your Paste Deployment .ini file will look like
+
+.. include:: code/metadata/metadata2.ini
+   :literal:
+   :start-after: #STARTNEW
+   :end-before: #ENDNEW
+
+Exercise: repoze.who (4)
+========================
+
+repoze.who components are configured in a separate file:
+
+.. include:: code/metadata/who.ini
+   :literal:
+
+Exercise: Paste Deployment (7)
+==============================
+
+- find more applications or middleware on the net
+- add one them to your Paste Deployment file
+- http://wsgi.org
+- http://pypi.python.org
+
+Exercise: Paste Deployment (8)
+==============================
+
+Nice examples:
+
+- repoze.profile
+- repoze.debug
+- wphp
+- WsgiDAV

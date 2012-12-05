@@ -1,0 +1,185 @@
+====================================
+A quick tour of the standard library
+====================================
+
+:Version: 0.1 of 10.12.2009
+:Author: Daniel Nouri
+
+.. contents::
+.. include:: <s5defs.txt>
+
+subprocess
+==========
+
+The subprocess module provides a consistent interface to creating and
+working with additional processes.  An example::
+
+  >>> import subprocess
+  >>> subprocess.call('ls -1 $HOME', shell=True)
+  0
+
+subprocess (2)
+==============
+
+We can communicate with the subprocess.  Let's get the output::
+
+  >>> proc = subprocess.Popen(
+  ...     ['ls', '-1'], stdout=subprocess.PIPE)
+  >>> proc.communicate()[0]
+  'code\nindex.html\nmake.sh\npresentation.txt\nsample.csv\nsample.ini\ntest.py\nui\n'
+
+subprocess (3)
+==============
+
+We can write in a similar fashion::
+
+  >>> proc = subprocess.Popen(
+  ...     ['xargs', 'echo'], stdin=subprocess.PIPE)
+  >>> proc.communicate('send this to echo')
+  (None, None)
+
+csv
+===
+
+To read data from a CSV file into a list of dicts, we use the
+``DictReader``::
+
+  >>> import csv
+  >>> f = open('sample.csv')
+  >>> try:
+  ...     reader = csv.DictReader(f)
+  ...     for row in reader:
+  ...         print row['firstname']
+  ... finally:
+  ...     f.close() # doctest: +ELLIPSIS
+  Guido
+  Barry
+  Clayton
+  Yukihiro
+  Joe
+
+csv (2)
+=======
+
+The ``DictWriter`` must be given a list of field names so that it
+knows in which order to write the fields.
+
+**Exercise**: Write a function that takes a list of Person objects and
+writes them out to a CSV file.
+
+urllib
+======
+
+::
+
+  >>> import urllib
+  >>> import urllib2
+  >>> query_args = {'q': 'coimbra'}
+  >>> encoded_args = urllib.urlencode(query_args)
+  >>> url = 'http://google.com/search?' + encoded_args
+
+urllib (2)
+==========
+
+::
+
+  >>> print urllib2.urlopen(url).read().strip() # doctest: +ELLIPSIS
+  <!DOCTYPE html...
+
+ConfigParser
+============
+
+Configuration should be stored outside of code.  ``ConfigParser``
+gives us a convenient way to access configuration inside of ``.ini``
+files.
+
+ConfigParser (2)
+================
+
+::
+
+  >>> import ConfigParser
+  >>> config = ConfigParser.ConfigParser()
+  >>> config.read('sample.ini')
+  ['sample.ini']
+  >>> hostname = config.get('server', 'hostname')
+  >>> hostname
+  'imap.gmail.com'
+
+imaplib
+=======
+
+::
+
+  >>> import imaplib
+  >>> c = imaplib.IMAP4_SSL(hostname)
+  >>> c.login(
+  ...     config.get('account', 'username'),
+  ...     config.get('account', 'password'))
+
+imaplib (2)
+===========
+
+Print the number of messages in the INBOX::
+
+  >>> typ, data = c.select('INBOX')
+  >>> num_msgs = int(data[0])
+  >>> print num_msgs
+  12
+
+imaplib (3)
+===========
+
+::
+
+  >>> import email
+  >>> typ, msg_data = c.fetch('1', '(RFC822)')
+  >>> c.close()
+  >>> for response_part in msg_data:
+  ...     if isinstance(response_part, tuple):
+  ...         msg = email.message_from_string(
+  ...             response_part[1])
+  ...         print 'Subject: ' + msg['subject']
+
+
+json
+====
+
+::
+
+  >>> import json
+  >>> data = json.dumps({
+  ...     'firstname': u'Daniel',
+  ...     'lastname': u'Nouri',
+  ...     'registered': True})
+  >>> data
+  '{"lastname": "Nouri", "registered": true, "firstname": "Daniel"}'
+
+json (2)
+========
+
+::
+
+  >>> json.loads(data)
+  {u'lastname': u'Nouri', u'registered': True, u'firstname': u'Daniel'}
+
+json (3)
+========
+
+**Exercise**: Write a function to serialize Person objects to JSON
+format, and initialize them from JSON.
+
+SimpleHTTPServer
+================
+
+::
+
+  $ python -m SimpleHTTPServer
+
+Afternoon project ideas
+=======================
+
+- Write a command-line tool for doing Google searches
+- Use an offical Google API with JSON
+- Read all mails from an IMAP server INBOX and write them to disk
+- Grab a CSV file with statistics and generate graphs

@@ -1,0 +1,6 @@
+firstname,lastname,email,phone,extension,department,position,organization,location,country,website,language,login_name,user_name,created,groups
+Guido,van Rossum,guido@example.org,(123) 456-7890,42,Silly Walks,BDFL,Python,California,USA,http://www.python.org/~guido/,Dutch,guido,guido,1960-01-31 10:39:54.788643-05:00,pythonistas|testcommunity
+Barry,Warsaw,barry@example.org,(987) 654-3210,502,Spam,FLUFL,Mailman,Somewhere,USA,http://barry.warsaw.us/,English,barry,barry,1962-11-05 10:39:54.788643-05:00,pythonistas
+Clayton,Parker,clayton@example.org,(317) 123-4567,603,Claytronics,Lead Developer,"Six Feet Up, Inc.",Fortville,USA,http://claytron.com,English,claytron,claytron,1980-06-03 23:05:54.788643-05:00,pythonistas|rubists|testcommunity
+Yukihiro,Matsumoto,matz@example.org,+123423235,,,Ruby Guy,Ruby,Tokyo,Japan,http://www.rubyist.net/~matz/,Japanese,matz,matz,1965-04-14 10:39:54.788643-05:00,rubists|pythonistas
+Joe,Blow,joe@example.org,(111) 111-1111,1,,,,,,http://joeblow.com,English,joeblow,joeblow,1962-11-05 10:39:54.788643-05:00,testcommunity

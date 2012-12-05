@@ -1,0 +1,1839 @@
+====================================
+Python programming language tutorial
+====================================
+
+:Version: 0.2 of 03.06.2010
+
+.. contents::
+.. include:: <s5defs.txt>
+
+Daniel Nouri
+============
+
+I am:
+
+- Python developer since 2001
+- Independent web developer
+- http://danielnouri.org
+- daniel.nouri@gmail.com
+
+Resources
+=========
+
+This tutorial is mostly borrowing from:
+
+- Guido's Python tutorial: http://docs.python.org/tutorial
+
+Also useful:
+
+- Dive into Python book: http://diveintopython.org
+
+Interactive mode
+================
+
+- Type ``python`` at the command line.  You should get::
+
+    Python 2.6 (#1, Feb 28 2007, 00:02:06)
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>>
+
+Interactive mode (2)
+====================
+
+- Doesn't work?
+- On Windows, try ``C:\python26\python.exe``
+- Or set the path: ``set path=%path%;C:\python26``
+
+Interactive mode (3)
+====================
+
+- To get out, type ``Ctrl-Z`` or ``Ctrl-D``.
+
+Interactive mode (4)
+====================
+
+Our first program::
+
+    >>> world_is_flat = 1
+    >>> if world_is_flat:
+    ...     print "Don't fall off!"
+    ...
+    Don't fall off!
+
+Python as a calculator
+======================
+
+Use Python as a calculator::
+
+    >>> 2+2
+    4
+    >>> 2+2  # a comment on the same line as code
+    4
+
+Python as a calc (2)
+====================
+
+The operators ``+``, ``-``, ``*``, ``/``, ``(`` and ``)`` work just
+like in most other languages::
+
+    >>> 50-5*6
+    20
+    >>> (50-5)*6
+    270
+
+Python as a calc (3)
+====================
+
+Integer division returns the floor (before Python 3.x)::
+
+    >>> 7/3
+    2
+    >>> 7/-3
+    -3
+
+Python as a calc (4)
+====================
+
+The equal sign (``=``) is used to assign a value to a variable::
+
+    >>> width = 20
+    >>> height = 5*9
+    >>> width * height
+    900
+
+Python as a calc (5)
+====================
+
+Floating point operations::
+
+    >>> 3 * 3.75 / 1.5
+    7.5
+    >>> 7.0 / 2
+    3.5
+
+Python as a calc (6)
+====================
+
+The last printed expression is assigned to the variable ``_``::
+
+    >>> tax = 12.5 / 100
+    >>> price = 100.50
+    >>> price * tax
+    12.5625
+
+Python as a calc (7)
+====================
+
+::
+
+    >>> _
+    12.5625
+    >>> price + _
+    113.0625
+    >>> round(_, 2)
+    113.06
+
+Strings
+=======
+
+::
+
+    >>> 'spam eggs'
+    'spam eggs'
+    >>> 'doesn\'t'
+    "doesn't"
+    >>> '"Yes," he said.'
+    '"Yes," he said.'
+
+Strings (2)
+===========
+
+::
+
+    >>> print """
+    ... Usage: thingy [OPTIONS]
+    ...      -h           Display this usage message
+    ...      -H hostname  Hostname to connect to
+    ... """
+    Usage: thingy [OPTIONS]
+         -h           Display this usage message
+         -H hostname  Hostname to connect to
+
+Strings (3)
+===========
+
+``+`` and ``*`` operator::
+
+    >>> word = 'Help' + 'A'
+    >>> word
+    'HelpA'
+    >>> '<' + word*5 + '>'
+    '<HelpAHelpAHelpAHelpAHelpA>'
+
+Strings (4)
+===========
+
+Indexing works like in C.  There's no separate character type::
+
+    >>> word
+    'HelpA'
+    >>> word[4]
+    'A'
+
+Strings (5)
+===========
+
+Substrings using the *slice notation*::
+
+    >>> word[0:2]
+    'He'
+    >>> word[2:4]
+    'lp'
+
+Strings (6)
+===========
+
+Slice indexes have useful defaults::
+
+    >>> word[:2] # The first two characters
+    'He'
+    >>> word[2:] # Everything except \
+    ...          # the first two characters
+    'lpA'
+
+Strings (7)
+===========
+
+Python strings are *immutable*.  Assigning to an indexed position
+results in an error::
+
+    >>> word[0] = 'x'
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in ?
+    TypeError: 'str' object does not support item assignment
+
+Strings (8)
+===========
+
+However, creating a new string is easy and efficient::
+
+    >>> 'x' + word[1:]
+    'xelpA'
+    >>> 'Splat' + word[4]
+    'SplatA'
+
+Strings (9)
+===========
+
+Out-of-range slice indices are handled gracefully::
+
+    >>> word[1:100]
+    'elpA'
+    >>> word[10:]
+    ''
+    >>> word[2:1]
+    ''
+
+Strings (10)
+============
+
+Indices may be negative numbers, to start counting from the right::
+
+   >>> word[-1] # The last character
+   'A'
+   >>> word[-2] # The last-but-one character
+   'p'
+
+Strings (11)
+============
+
+::
+
+   >>> word[-2:] # The last two characters
+   'pA'
+   >>> word[:-2] # Everything except the last two characters
+   'Hel'
+   >>> word[-100:] # Out-of-range index is truncated
+   'HelpA'
+
+Strings (12)
+============
+
+The built-in function ``len`` returns the length of a string::
+
+    >>> s = 'supercalifragilisticexpialidocious'
+    >>> len(s)
+    34
+
+Lists
+=====
+
+- one of Python's *compound data types*
+- can be written as a list of comma-seprated values (items) between
+  square brackets
+- items need not have the same type
+
+::
+
+    >>> a = ['spam', 'eggs', 100, 1234]
+    >>> a
+    ['spam', 'eggs', 100, 1234]
+
+Lists (2)
+=========
+
+Like strings, lists support index operations::
+
+    >>> a[0]
+    'spam'
+    >>> a[3]
+    1234
+    >>> a[-2]
+    100
+
+Lists (3)
+=========
+
+Lists can be sliced and concatenated::
+
+    >>> a[1:-1]
+    ['eggs', 100]
+    >>> a[1:-1]
+    ['eggs', 100]
+    >>> a[:2] + ['bacon', 2*2]
+    ['spam', 'eggs', 'bacon', 4]
+    >>> 2*a[:2] + ['Boo!']
+    ['spam', 'eggs', 'spam', 'eggs', 'Boo!']
+
+Lists (4)
+=========
+
+Unlike with strings, it's possible to change individual elements of a
+list::
+
+    >>> a
+    ['spam', 'eggs', 100, 1234]
+    >>> a[2] = a[2] + 23
+    >>> a
+    ['spam', 'eggs', 123, 1234]
+
+Lists (5)
+=========
+
+Assignments to slices is also possible::
+
+    >>> # Replace some items:
+    ... a[0:2] = [1, 12]
+    >>> a
+    [1, 12, 123, 1234]
+    >>> # Remove some:
+    ... a[0:2] = []
+    >>> a
+    [123, 1234]
+
+Lists (6)
+=========
+
+::
+
+    >>> # Insert some:
+    ... a[1:1] = ['bletch', 'xyzzy']
+    >>> a
+    [123, 'bletch', 'xyzzy', 1234]
+    >>> # Insert (a copy of) itself:
+    ... a[:0] = a
+    >>> a
+    [123, 'bletch', 'xyzzy', 1234, 123, 'bletch', 'xyzzy', 1234]
+
+Lists (7)
+=========
+
+The built-in function ``len`` also works with lists::
+
+    >>> a = ['a', 'b', 'c', 'd']
+    >>> len(a)
+    4
+
+Lists (8)
+=========
+
+It's possible to nest lists::
+
+    >>> q = [2, 3]
+    >>> p = [1, q, 4]
+    >>> len(p)
+    3
+    >>> p[1]
+    [2, 3]
+
+Lists (9)
+=========
+
+::
+
+    >>> p[1].append('xtra')
+    >>> p
+    [1, [2, 3, 'xtra'], 4]
+    >>> q
+    [2, 3, 'xtra']
+
+Note that ``p[1]`` and ``q`` refer to the same object!
+
+First Steps Towards Programming
+===============================
+
+Fibonacci series; the sum of two elements defines the next::
+
+    >>> a, b = 0, 1
+    >>> while b < 1000:
+    ...     print b,
+    ...     a, b = b, a+b
+    ... 
+    1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987
+
+First Steps Towards Programming (2)
+===================================
+
+- *Multiple assignment*: the expressions on the right-hand are all
+  evaluated first before any assignment takes place.
+
+- The ``while`` loop executes as long as the condition remains true.
+
+First Steps Towards Programming (3)
+===================================
+
+- Standard comparison operators work like in C: ``<``, ``>``, ``==``,
+  ``<=``, ``>=``, ``!=``.
+
+- Any non-zero value is true, like in C.  Zero is false.
+
+- The condition may also be a string or list value; in fact any
+  sequence.  An empty sequence is false, a non-empty sequence is true.
+
+First Steps Towards Programming (4)
+===================================
+
+::
+
+     >>> s = [1, 2]
+     >>> len(s) >= 3
+     False
+     >>> if s:
+     ...     print "Non-empty"
+     ...     print "Length:", len(s)
+     Non-empty
+     Length: 2
+
+First Steps Towards Programming (5)
+===================================
+
+- The *body* of the loop is *indented*: indentation is how Python
+  groups statements.  In practice your editor will help with
+  indenting.
+
+- The ``print`` statement writes the value of the expression it is
+  given.  A trailing comma avoids newline after the input.
+
+``If`` statment
+===============
+
+::
+
+    >>> x = 42
+    >>> if x < 0:
+    ...      x = 0
+    ...      print 'Negative changed to zero'
+    ... elif x == 0:
+    ...      print 'Zero'
+    ... elif x == 1:
+    ...      print 'Single'
+    ... else:
+    ...      print 'More'
+    ...
+    More
+
+``If`` statement (2)
+====================
+
+- There can be zero or more ``elif`` parts and the ``else`` part is
+  optional.
+
+- ``elif`` is short for *else if*
+
+- An ``if`` ... ``elif`` ... ``elif`` ... sequence is a substitute for
+  the ``switch`` or ``case`` statements found in other languages.
+
+``For`` statement
+=================
+
+::
+
+   >>> # Measure some strings:
+   ... a = ['cat', 'window', 'defenestrate']
+   >>> for x in a:
+   ...     print x, len(x)
+   ... 
+   cat 3
+   window 6
+   defenestrate 12
+
+``For`` statement (2)
+=====================
+
+- May be different to what you're used to.
+
+- The ``for`` statement in Python always iterates over items of any
+  sequence in the order that they appear in the sequence.
+
+``For`` statement (3)
+=====================
+
+It is not safe to modify the sequence being iterated over.  Make a
+copy if you need to::
+
+    >>> for x in a[:]: # make a slice copy
+    ...    if len(x) > 6: a.insert(0, x)
+    ... 
+    >>> a
+    ['defenestrate', 'cat', 'window', 'defenestrate']
+
+``range`` function
+==================
+
+The ``range`` function generates lists containing arithmetic
+progressions::
+
+   >>> range(10) # end point is never part of the list
+   [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+   >>> range(5, 10) # range starts at 5
+   [5, 6, 7, 8, 9]
+   >>> range(0, 10, 3) # increment is 3
+   [0, 3, 6, 9]
+
+``break`` and ``continue`` statments
+====================================
+
+- The ``break`` statement breaks out of the smallest enclosing ``for``
+  or ``while`` loop.
+
+- The ``continue`` statement continues with the next iteration of the
+  loop.
+
+- That is, both statements work just like in C.
+
+``break`` and ``continue`` statments (2)
+========================================
+
+::
+
+    <<< a
+    ['defenestrate', 'cat', 'window', 'defenestrate']
+    <<< f = raw_input("Find: ")
+    Find: window
+    <<< for x in a:
+    ...     if f == x:
+    ...         print "Found", f
+    ...         break
+    ... 
+    Found window
+
+``else`` clauses on loops
+=========================
+
+Loop statements may have an ``else`` clause that's executed when the
+loop was **not** terminated by a ``break``.
+
+``else`` clauses on loops (2)
+=============================
+
+::
+
+    >>> f = 'dog'
+    >>> for x in a:
+    ...     if f == x:
+    ...         print "Found", f
+    ...         break
+    ... else:
+    ...     print f, "not found"
+    dog not found
+
+Exercise: Prime numbers
+=======================
+
+Write a program that for each number between 2 and 9:
+
+- prints the number itself if it's a prime number
+- prints two factors that multiplied together equal the number
+
+Exercise: Prime numbers (2)
+===========================
+
+- You'll use ``for``, ``range``, ``break``, and ``else``.
+
+- You'll need the modulo operator ``%``::
+
+    >>> 9 / 4
+    2
+    >>> 9 % 4
+    1
+
+Exercise: Prime numbers (3)
+===========================
+
+::
+
+    >>> for n in range(2, 10):
+    ...     for x in range(2, n):
+    ...         if n % x == 0:
+    ...             print n, 'equals',
+    ...             print x, '*', n/x
+    ...             break
+    ...     else: # inner loop fell through
+    ...         print n, 'is a prime number'
+    ... 
+    2 is a prime number
+    3 is a prime number
+    4 equals 2 * 2
+    5 is a prime number
+    6 equals 2 * 3
+    7 is a prime number
+    8 equals 2 * 4
+    9 equals 3 * 3
+
+Functions
+=========
+
+::
+
+    >>> def replace(s, fro, to):
+    ...     for i in range(len(s)):
+    ...         if s[i] == fro:
+    ...             s[i] = to
+
+    >>> k = ['one', 'two']
+    >>> replace(k, 'one', 'three')
+    >>> k
+    ['three', 'two']
+
+Functions (2)
+=============
+
+- The ``def`` keyword introduces a function definition, followed by
+  the function name and parameters in parantheses.
+
+- The function body starts at the next line and is indented.
+
+- Values in Python are *always* object references.
+
+Functions (3)
+=============
+
+- Defining a function introduces the name in the current symbol table.
+
+- The function can be assigned to another name::
+
+    >>> r = replace
+    >>> r(k, 'three', 1)
+    >>> k
+    [1, 'two']
+
+Exercise: Fibonacci function
+============================
+
+Write a function that writes the Fibonacci series to an arbitrary
+boundary.
+
+Exercise: Fibonacci function (2)
+================================
+
+::
+    
+    >>> def fib(n):
+    ...     """Print Fibonacci series up to n."""
+    ...     a, b = 0, 1
+    ...     while b < n:
+    ...         print b,
+    ...         a, b = b, a+b
+    ... 
+    >>> # Now call the function we just defined:
+    ... fib(2000)
+    1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597
+
+Functions (4)
+=============
+
+Isn't ``fib`` really a procedure since it returns no value?  Python
+functions always have a default return value, which is ``None``.  It's
+not printed by the interactive mode::
+
+    >>> fib(0)
+    >>> print fib(0)
+    None
+
+Functions (5)
+=============
+
+Use the ``return`` keyword to return a value from a function::
+
+    >>> def absadd(a, b):
+    ...     return abs(a + b)
+    >>> absadd(-5, -10)
+    15
+    >>> a = absadd(absadd(-5, -10), -100)
+    >>> a
+    85
+
+Exercise: Fibonacci function (2)
+================================
+
+Modify your Fibonacci function to return a list instead of printing
+numbers.
+
+You'll use the ``append`` *method* of lists::
+
+    >>> l = [1, 5]
+    >>> l.append('Nine')
+    >>> l
+    [1, 5, 'Nine']
+
+Exercise: Fibonacci function (3)
+================================
+
+::
+
+    >>> def fib2(n):
+    ...     """Fibonacci series up to n."""
+    ...     result = []
+    ...     a, b = 0, 1
+    ...     while b < n:
+    ...         result.append(b)
+    ...         a, b = b, a+b
+    ...     return result
+
+Exercise: ``replace``
+=====================
+
+Write a function ``replace2`` that works like the ``replace`` we
+defined earlier with the exception that it doesn't modify the list
+that we pass to it, but returns a new list.
+
+Exercise: ``replace`` (2)
+=========================
+
+::
+
+    >>> def replace2(s, fro, to):
+    ...     s = s[:] # copy
+    ...     for i in range(len(s)):
+    ...         if s[i] == fro:
+    ...             s[i] = to
+    ...     return s
+    >>> s = ['spam', 'eggs']
+    >>> replace2(s, 'eggs', 'butter')
+    ['spam', 'butter']
+    >>> s
+    ['spam', 'eggs']
+
+Functions (6)
+=============
+
+::
+
+    >>> f100 = fib2(100)
+    >>> f100
+    [1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+
+Function arguments
+==================
+
+It's possible to define functions with a variable number of arguments,
+like ``range``::
+
+    >>> range(5)
+    [0, 1, 2, 3, 4]
+    >>> range(1, 5)
+    [1, 2, 3, 4]
+    >>> range(1, 6, 2)
+    [1, 3, 5]
+
+Function arguments (2)
+======================
+
+*Default argument values* are very useful::
+
+    >>> def replace3(s, fro, to, count=0):
+    ...     s = s[:]
+    ...     for i in range(len(s)):
+    ...         if s[i] == fro:
+    ...             s[i] = to
+    ...             count = count - 1
+    ...             if count == 0: break
+    ...     return s
+
+Function arguments (3)
+======================
+
+::
+
+    >>> replace3(['one', 'two', 'one', 'two'],
+    ...          'one', 'three')
+    ['three', 'two', 'three', 'two']
+    >>> replace3(['one', 'two', 'one', 'two'],
+    ...          'one', 'three', 1)
+    ['three', 'two', 'one', 'two']
+
+Exercise: ``ask_ok``
+====================
+
+::
+
+    >>> def ask_ok(prompt, retries=4,
+    ...            complaint='Yes or no, plz!'):
+    ...     """Prompt the user for yes or no.
+    ...     Return True for positive answer or
+    ...     False for negative answer.  User will
+    ...     be prompted a maximum of ``retries``
+    ...     times before ``IOException`` is
+    ...     raised.
+    ...     """
+
+Exercise: ``ask_ok`` (2)
+========================
+
+Your program should:
+
+- print the ``prompt``
+- ask the user for input (``raw_input``) only ``retries`` times (``while``)
+- print the ``complaint`` if the user gave wrong input
+- return ``True`` or ``False`` or raise an error if no valid input was
+  given
+
+Exercise: ``ask_ok`` (3)
+========================
+
+How to *raise an exception*? ::
+
+    >>> input = 'N'
+    >>> if input == 'yes':
+    ...     value = True
+    ... elif input == 'no':
+    ...     value = False
+    ... else:
+    ...     raise ValueError("Invalid input!")
+    Traceback (most recent call last):
+    ValueError: Invalid input!
+
+Exercise: ``ask_ok`` (4)
+========================
+
+**Extra**: Add tolerance so that the user can enter any of *y*, *ye*,
+and *yes* to answer positively, and any of *n*, *no*, *nope* to answer
+negatively.  For this, you may want to try the ``in`` operator::
+
+    >>> 'one' in ['two', 'three']
+    False
+
+Exercise: ``ask_ok`` (5)
+========================
+
+.. class:: tiny
+..
+
+    >>> def ask_ok(prompt, retries=4,
+    ...            complaint='Yes or no, please!'):
+    ...     while True:
+    ...         ok = raw_input(prompt)
+    ...         if ok in ('y', 'ye', 'yes'):
+    ...             return True
+    ...         if ok in ('n', 'no', 'nope'):
+    ...             return False
+    ...         retries = retries - 1
+    ...         if retries < 0:
+    ...             raise IOError('refusenik user')
+    ...         print complaint
+
+Function arguments (4)
+======================
+
+The function can be called like this:
+
+.. class:: tiny
+
+- ``ask_ok('Do you really want to quit?')``
+- ``ask_ok('OK to overwrite the file?', 2)``
+- ``ask_ok('OK to overwrite the file?', 2, 'yes or no')``
+- ``ask_ok('Continue? (y/n)', complaint='Come on!')``
+- ``ask_ok('Continue? (y/n)', complaint='y/n', retries=10)``
+
+Function arguments (5)
+======================
+
+Arbitrary argument lists are less frequent:
+
+.. class:: tiny
+..
+
+    >>> def cheeseshop(kind, *arguments, **keywords):
+    ...     print "-- Do you have any", kind, "?"
+    ...     print "-- I'm sorry, we're all out of", kind
+    ...     for arg in arguments:
+    ...         print arg
+    ...     print "-" * 40
+    ...     keys = keywords.keys()
+    ...     keys.sort()
+    ...     for kw in keys: print kw, ":", keywords[kw]
+
+Function arguments (6)
+======================
+
+.. class:: tiny
+..
+
+    >>> cheeseshop("Limburger", "It's very runny, sir.",
+    ...            "It's really very, VERY runny, sir.",
+    ...            shopkeeper='Michael Palin',
+    ...            client="John Cleese",
+    ...            sketch="Cheese Shop Sketch")
+    -- Do you have any Limburger ?
+    -- I'm sorry, we're all out of Limburger
+    It's very runny, sir.
+    It's really very, VERY runny, sir.
+    ----------------------------------------
+    client : John Cleese
+    shopkeeper : Michael Palin
+    sketch : Cheese Shop Sketch
+
+Function arguments (7)
+======================
+
+If your arguments are already in a list (or tuple), you can use the
+``*`` operator to unpack the arguments::
+
+    >>> range(3, 6) # normal call
+    [3, 4, 5]
+    >>> args = [3, 6]
+    >>> range(*args) # arguments unpacked
+    [3, 4, 5]
+
+Function arguments (8)
+======================
+
+The same works with keyword arguments and dictionaries:
+
+.. class:: tiny
+..
+
+    >>> def parrot(voltage, state='a stiff', action='voom'):
+    ...     print "-- This parrot wouldn't", action,
+    ...     print "if you put", voltage, "volts through it.",
+    ...     print "E's", state, "!"
+    >>> d = {"voltage": "four million",
+    ...      "state": "bleedin' demised",
+    ...      "action": "VOOM"}
+    >>> parrot(**d)
+    -- This parrot wouldn't VOOM if you put four million volts through it. E's bleedin' demised !
+
+Exercise: ``range2``
+====================
+
+Write a function ``range2`` that acts just like the Python built-in.
+
+You'll probably use a variable number of positional, non-keyword
+arguments.
+
+To remind yourself how ``range`` works, see ``help(range)``.
+
+Exercise: ``range2`` (2)
+========================
+
+::
+
+    >>> def range2(*args):
+    ...     start, step = 0, 1
+    ...     if len(args) > 1:
+    ...         start, stop = args[:2]
+    ...     else:
+    ...         stop = args[0]
+    ...     if len(args) == 3:
+    ...         step = args[2]
+    ...     return range(start, stop, step)
+
+Exercise: ``range2`` (3)
+========================
+
+::
+
+    >>> range2(5)
+    [0, 1, 2, 3, 4]
+    >>> range2(1, 5)
+    [1, 2, 3, 4]
+    >>> range2(1, 6, 2)
+    [1, 3, 5]
+
+Finding documentation
+=====================
+
+Python has great built-in documentation facilities.  Try
+``help(max)`` or ``help(filter)``.
+
+Exercise: Using ``max``
+=======================
+
+Use ``max`` to find the largest element of the list ``l``.
+
+Exercise: Using ``filter``
+==========================
+
+Use ``filter`` to remove all zeros from a list of numbers like this
+one::
+
+    >>> l = [5, 4, 3, 0, 2, 1, 0]
+
+Finding documentation (2)
+=========================
+
+How to know what methods a list has?  Remember there was ``l.append``.
+
+What other methods exist?  Try ``dir(l)``.  For each method, you can
+do ``help(method)``, like ``help(l.insert)``.  You can also do
+``help(l)``.
+
+Exercise: Some sorting
+======================
+
+Write a function ``sort_in`` that takes a list and an element to sort
+into the list.  The function should modify the list *in place* and
+expect the list to be sorted already.
+
+You'll probably use ``range``.  Try out ``l.insert``.
+
+Exercise: Some sorting (2)
+==========================
+
+Let's also look at how ``enumerate`` works::
+
+    >>> for index, value in enumerate(
+    ...     ['un', 'deux', 'trois']):
+    ...     print index, value
+    ... 
+    0 un
+    1 deux
+    2 trois
+
+Exercise: Some sorting (3)
+==========================
+
+::
+
+    >>> def sort_in(s, el):
+    ...     for index, item in enumerate(s):
+    ...         if el < item:
+    ...             break
+    ...     else:
+    ...         index = len(s)
+    ...     s.insert(index, el)
+    ...     return s
+
+Exercise: Some sorting (4)
+==========================
+
+Let's try it out::
+
+    >>> sort_in([3, 5], 4)
+    [3, 4, 5]
+    >>> sort_in([], 3)
+    [3]
+    >>> sort_in([5], 3)
+    [3, 5]
+    >>> sort_in([5], 6)
+    [5, 6]
+
+Exercise: Some sorting (5)
+==========================
+
+For more sorting, check out the ``sorted`` built-in.
+
+Try ``sorted`` to reverse sort the items in a list.
+
+Exercise: Some sorting (6)
+==========================
+
+::
+
+     >>> s = ['a', 'z', 'b', 'f']
+     >>> sorted(s, reverse=True)
+     ['z', 'f', 'b', 'a']
+     >>> s # s is still the old list
+     ['a', 'z', 'b', 'f']
+     >>> s.sort(reverse=True) # in-place
+     >>> s
+     ['z', 'f', 'b', 'a']
+
+More functions
+==============
+
+Functions in Python are first class objects::
+
+    >>> def divide_by_2(x):
+    ...     return x / 2
+    ... 
+    >>> divide_by_2
+    <function divide_by_2 at ...>
+    >>> divide_by_2(10)
+    5
+
+More functions (2)
+==================
+
+We can pass one function as an argument to another::
+
+    >>> def is_lower(s):
+    ...     return s.islower()  
+    >>> filter(is_lower,
+    ...        ['Spam', 'eggs', 'limBurger'])
+    ['eggs']
+
+More functions (3)
+==================
+
+Create functions on the fly:
+
+.. class:: tiny
+..
+
+    >>> def divide_by_factory(n):
+    ...     def divide_by_n(x):
+    ...         return x / n
+    ...     return divide_by_n
+    >>> divide_by_2 = divide_by_factory(2)
+    >>> divide_by_5 = divide_by_factory(5)
+    >>> divide_by_2(10)
+    5
+    >>> divide_by_5(50)
+    10
+
+List comprehensions
+===================
+
+Easier to read than ``filter``::
+
+    >>> l = ['Spam', 'eggs', 'limBurger']
+    >>> [w for w in l if w.islower()]
+    ['eggs']
+
+Exercise: More sorting
+======================
+
+``sorted`` takes an optional ``key`` argument.  If provided, this must
+be a function that takes an element and returns a value suitable for
+sorting that element: a *predicate*.
+
+Exercise: More sorting (2)
+==========================
+
+Write a function ``even_sort`` that takes a list with numbers and
+returns a new list with even numbers before odd ones.
+
+So ``[4, 5, 6, 7, 8]`` will result in ``[4, 6, 8, 5, 7]``.
+
+Exercise: More sorting (3)
+==========================
+
+::
+
+    >>> def modulo2(number):
+    ...     return number % 2
+    >>> def even_sort(s):
+    ...     return sorted(s, key=modulo2)
+
+    >>> even_sort([4, 5, 6, 7, 8]) # stable
+    [4, 6, 8, 5, 7]
+
+Lambda
+======
+
+With the keyword ``lambda``, small anonymous functions can be created.
+This function::
+
+    >>> lambda a, b: a + b
+    <function <lambda> at ...>
+
+Is equivalent to this one::
+
+    >>> def add(a, b):
+    ...     return a + b
+
+Lambda (2)
+==========
+
+We can also assign the former a name::
+
+    >>> add = lambda a, b: a + b
+    >>> add(5, -3)
+    2
+
+Exercise: More sorting (3)
+==========================
+
+Instead of defining a separate ``modulo2`` function, we can use a
+``lambda`` function with ``even_sort``::
+
+    >>> def even_sort2(s):
+    ...     return sorted(s, key=lambda n: n%2)
+
+    >>> even_sort2([4, 5, 6, 7, 8])
+    [4, 6, 8, 5, 7]
+
+Exercise: More sorting (4)
+==========================
+
+Use ``sorted`` to reverse the order of a list.  But this time, don't
+use the ``reverse`` argument, but do it with a ``key`` parameter.
+
+Exercise: More sorting (5)
+==========================
+
+These two are thus equivalent::
+
+    >>> sorted([5, 9, 3, 5], key=lambda n:-n)
+    [9, 5, 5, 3]
+
+    >>> sorted([5, 9, 3, 5], reverse=True)
+    [9, 5, 5, 3]
+
+More on lists
+=============
+
+- ``list.append(x)``
+- ``list.extend(L)``
+- ``list.insert(i, x)``
+- ``list.remove(x)``
+- ``list.pop([i])``
+
+More on lists (2)
+=================
+
+- ``list.count(x)``
+- ``list.sort()``
+- ``list.reverse()``
+
+Using lists as stacks
+=====================
+
+LIFO::
+
+    >>> stack = [3, 4, 5]
+    >>> stack.append(6)
+    >>> stack.append(7)
+    >>> stack
+    [3, 4, 5, 6, 7]
+
+Using lists as stacks (2)
+=========================
+
+::
+
+   >>> stack
+   [3, 4, 5, 6, 7]
+   >>> stack.pop()
+   7
+   >>> stack
+   [3, 4, 5, 6]
+   >>> stack.pop()
+   6
+
+Using lists as queues
+=====================
+
+FIFO::
+
+   >>> queue = ["Eric", "John", "Michael"]
+   >>> queue.append("Terry")  # Terry arrives
+   >>> queue.append("Graham") # Graham arrives
+   >>> queue.pop(0)
+   'Eric'
+   >>> queue
+   ['John', 'Michael', 'Terry', 'Graham']
+
+Files
+=====
+
+``open`` returns a file object, and is most commonly used with two
+arguments: ``open(filename, mode)``.
+
+::
+
+    >>> f = open('/tmp/workfile', 'w')
+    >>> print f
+    <open file '/tmp/workfile', mode 'w' at ...>
+
+Files (2)
+=========
+
+The second argument is a string containing a few characters describing
+the way in which the file will be used:
+
+- ``'r'`` is for only reading
+- ``'w'`` is for only writing
+- ``'a'`` is for appending
+- ``r+`` is for read and write
+
+Files (3)
+=========
+
+On Windows, ``'b'`` appended to the mode opens the file in binary
+mode, so there are also modes like ``'rb'``, ``'wb'``, and ``'r+b'``.
+Windows makes a distinction between text and binary files; the
+end-of-line characters in text files are automatically altered
+slightly when data is read or written.
+
+Files (4)
+=========
+
+Let's write to our previously opened file:
+
+    >>> f.write('This is the first.\n')
+    >>> f.close() # flush
+
+Files (5)
+=========
+
+We can now read it::
+
+    >>> f = open('/tmp/workfile') # 'r' default
+    >>> f.read() # read the entire file
+    'This is the first.\n'
+    >>> f.close()
+
+Files (6)
+=========
+
+Let's write more to our file::
+
+    >>> f = open('/tmp/workfile', 'a')
+    >>> f.write("""This is the second,
+    ... and this is the third line.
+    ... """)
+    >>> f.close() # flush
+
+Files (7)
+=========
+
+We can read lines by looping over the file object:
+
+    >>> f = open('/tmp/workfile', 'r')
+    >>> for line in f:
+    ...     print line, # includes \n
+    This is the first.
+    This is the second,
+    and this is the third line.
+    >>> f.close()
+
+Exercise: ``replacef``
+======================
+
+Write a function ``replacef`` that takes the name of a file, and two
+strings.  The function should replace in the given file all
+occurrences of the first string by the second one.
+
+Exercise: ``replacef`` (2)
+==========================
+
+::
+
+    >>> def replacef(fn, fro, to):
+    ...     f = open(fn)
+    ...     contents = f.read()
+    ...     f.close()
+    ...     f = open(fn, 'w')
+    ...     f.write(contents.replace(fro, to))
+    ...     f.close()
+
+Exercise: ``replacef`` (3)
+==========================
+
+Let's try it out::
+
+    >>> replacef('/tmp/workfile', ' is', ' be')
+    >>> f = open('/tmp/workfile')
+    >>> print f.read()
+    This be the first.
+    This be the second,
+    and this be the third line.
+    >>> f.close()
+
+Encoding strings
+================
+
+The ``encode`` and ``decode`` methods of strings are useful::
+
+    >>> s = 'Hello, Python African Tour!'.encode('base64')
+    >>> s
+    'SGVsbG8sIFB5dGhvbiBBZnJpY2FuIFRvdXIh\n'
+    >>> s.decode('base64')
+    'Hello, Python African Tour!'
+
+Our first Python module
+=======================
+
+Let's create our first script:
+
+- Create a new file called ``rot13.py``
+- We'll write our code into the file now.  Be careful with indentation,
+  and don't write ``>>>`` or ``...``.
+
+Our first Python module (2)
+===========================
+
+Write::
+
+    def encode_rot13(fn_in, fn_out):
+        f = open(fn_in)
+        contents = f.read()
+        f.close()
+        f = open(fn_out, 'w')
+        f.write(contents.encode('rot13'))
+        f.close()
+    
+Our first Python module (3)
+===========================
+
+At the end, write::
+
+    if __name__ == '__main__':
+        import sys
+        encode_rot13(sys.argv[1], sys.argv[2])
+
+Our first Python module (4)
+===========================
+
+Call it::
+
+    python rot13.py myfile.txt myfile-encoded.txt
+
+Exercise: ``encode.py``
+=======================
+
+Write a script::
+
+    encode.py <encoding> <firstfile> <secondfile>
+
+Encode the <firstfile> and write out to <secondfile>.
+
+Exercise: ``encode.py`` (2)
+===========================
+
+**Extra**: If <secondfile> is ommitted, then <firstfile> should be
+overwritten.
+
+Look at ``sys.argv``.
+
+Exercise: ``encode.py`` (3)
+===========================
+
+**Extra**::
+
+    encode <dec> <enc> <firstf> <secondf>
+
+E.g.::
+
+    encode iso-8859-1 utf-8 orig.txt conv.txt
+
+You'll need ``''.encode`` and ``''.decode`` methods!
+
+Tuples
+======
+
+Tuples are like lists, except that they're immutable, like strings::
+
+    >>> t = (12345, 54321, 'hello!')
+    >>> t[0]
+    12345
+    >>> t[0] = 67890
+    Traceback (most recent call last):
+    ...
+    TypeError: 'tuple' object does not support item assignment
+
+Tuples (2)
+==========
+
+A nice feature of Python is *sequence unpacking*::
+
+    >>> x, y, z = t
+    >>> x
+    12345
+    >>> y
+    54321
+    >>> z
+    'hello!'
+
+Tuples (3)
+==========
+
+We saw sequence unpacking before, with ``enumerate``::
+
+    >>> for index, item in enumerate(
+    ...     ("Un", "Deux", "Trois")):
+    ...     print index, item
+    0 Un
+    1 Deux
+    2 Trois
+    >>> tuple(enumerate(("Un", "Deux", "Trois")))
+    ((0, 'Un'), (1, 'Deux'), (2, 'Trois'))
+
+Sets
+====
+
+A set is an unordered collection with no duplicate elements::
+
+    >>> basket = ['apple', 'orange', 'apple',
+    ...           'pear', 'orange', 'banana']
+    >>> fruit = set(basket) # no duplicates
+    >>> fruit
+    set(['orange', 'pear', 'apple', 'banana'])
+
+Sets (2)
+========
+
+::
+
+    >>> 'orange' in fruit # fast test
+    True
+    >>> 'crabgrass' in fruit
+    False
+    >>> fruit.add('strawberry')
+    >>> len(fruit)
+    5
+
+Sets (3)
+========
+
+Set operations on word letters::
+
+    >>> a = set('abracadabra')
+    >>> b = set('alacazam')
+    >>> a # unique letters in a
+    set(['a', 'r', 'b', 'c', 'd'])
+    >>> a - b # letters in a but not in b
+    set(['r', 'b', 'd'])
+
+Sets (4)
+========
+
+Set operations on word letters contd.::
+
+    >>> union = a | b
+    >>> intersection = a & b
+    >>> xor = a ^ b
+
+Exercise: ``common.py``
+=======================
+
+Write a script ``common.py``::
+
+    python common.py <file1> [file2] [file3] [...]
+
+This script should print out a sorted list of common words in all
+files.
+
+Use the ``''.split`` method to get a list of words in a file.
+
+Exercise: ``common.py`` (2)
+===========================
+
+::
+
+    >>> def common(contents):
+    ...     words = set(contents[0].split())
+    ...     for s in contents[1:]:
+    ...         words &= set(s.split())
+    ...     return sorted(words)
+
+Exercise: ``common.py`` (3)
+===========================
+
+::
+
+    >>> common(["This is the first line",
+    ...         "This is the second line",
+    ...         "This is the third line",
+    ...         "This line is funny"])
+    ['This', 'is', 'line']
+
+Exercise: ``common.py`` (4)
+===========================
+
+::
+
+    if __name__ == '__main__':
+        all_contents = []
+        for fn in sys.argv[1:]:
+            f = open(fn)
+            all_contents.append(f.read())
+            f.close()
+        common(all_contents)
+
+Exercise: ``common.py`` (5)
+===========================
+
+Make ``common.py`` case-insensitive.  Look at helpful methods of a
+string.  Try ``help(str)``.
+
+Dictionaries
+============
+
+A dictionary is an unordered set of *key: value* pairs, with the
+requirement that the keys are unique.
+
+A pair of braces creates an empty dictionary: ``{}``.  Placing a
+comma-separated list of key:value pairs within the braces adds initial
+key:value pairs to the dictionary, like ``{1: 'un'}``.
+
+Dictionaries (2)
+================
+
+Any immutable type can be used as a key, like strings and tuples.
+Lists may not be used as keys, since they can be modified in place.
+
+Dictionaries (3)
+================
+
+The main operations are:
+
+- storing a value with some key
+- extracting a value given the key
+
+::
+
+    >>> tel = {'jack': 4098, 'sape': 4139}
+    >>> tel['guido'] = 4127
+    >>> tel['jack']
+    4098
+
+Dictionaries (4)
+================
+
+::
+
+    >>> tel
+    {'sape': 4139, 'jack': 4098, 'guido': 4127}
+    >>> del tel['sape']
+    >>> tel['irv'] = 4127
+    >>> tel
+    {'jack': 4098, 'irv': 4127, 'guido': 4127}
+    >>> tel.keys()
+    ['jack', 'irv', 'guido']
+    >>> 'guido' in tel
+    True
+
+Dictionaries (5)
+================
+
+Looping over dictionaries::
+
+    >>> for key in tel:
+    ...     print key,
+    jack irv guido
+
+    >>> for key, value in tel.items():
+    ...     print '%s: %s' % (key, value)
+    jack: 4098
+    irv: 4127
+    guido: 4127
+
+Exercise: ``count.py``
+======================
+
+Make a script ``count.py`` that returns a list of words in a given
+file along with the number of their occurrences, like this::
+
+    33 is
+    25 there
+    21 are
+    ...
+
+Exercise: ``count.py`` (2)
+==========================
+
+::
+
+    >>> def count(text):
+    ...     table = {}
+    ...     for word in text.split():
+    ...         table.setdefault(word, 0)
+    ...         table[word] += 1
+    ...     return table
+
+Exercise: ``count.py`` (3)
+==========================
+
+::
+
+    >>> def count_format(text):
+    ...     pairs = count(text).items()
+    ...     pairs.sort(key=lambda i:-i[1])
+    ...     for word, occ in pairs:
+    ...         print occ, word
+
+Exercise: ``count.py`` (4)
+==========================
+
+Let's try it out::
+
+    >>> f = open('/usr/share/doc/time/README')
+    >>> count_format(f.read())
+    5 and
+    5 the
+    2 program
+    2 GNU
+    2 as
+    ...
+    >>> f.close()
+
+Exercise: ``count.py`` (5)
+==========================
+
+Our count program has a little problem: It'll interpret punctuation
+characters as part of a word, like with "there," or "file.".
+
+Look at method ``''.strip()`` to see how to fix this.  Also look at
+the ``string`` module for useful constants.  Use ``import string;
+help(string)``.
+
+Exercise: ``count.py`` (6)
+==========================
+
+::
+
+    >>> import string
+    >>> '-file;.'.strip(string.punctuation)
+    'file'
+
+Zen of Python
+=============
+
+::
+
+    >>> import this
+    The Zen of Python, by Tim Peters...
+
+Classes
+=======
+
+::
+
+    >>> yussuf = {'firstname': 'Yussuf',
+    ...           'lastname': 'Islam'}
+    >>> def fullname(record):
+    ...     value = record['firstname']
+    ...     middlename = record.get('middlename')
+    ...     if middlename:
+    ...         value += ' ' + middlename
+    ...     value += ' ' + record['lastname']
+    ...     return value
+
+Classes (2)
+===========
+
+::
+
+    >>> fullname(yussuf)
+    'Yussuf Islam'
+    >>> michael = {'firstname': 'Michael',
+    ...            'lastname': 'Palin',
+    ...            'middlename': 'Abraham'}
+    >>> fullname(michael)
+    'Michael Abraham Palin'
+
+Classes (3)
+===========
+
+.. class:: tiny
+..
+
+    >>> class Person:
+    ...     def __init__(self, firstname, lastname,
+    ...                  middlename=''):
+    ...         self.firstname = firstname
+    ...         self.lastname = lastname
+    ...         self.middlename = middlename
+    ...     def fullname(self):
+    ...         value = self.firstname
+    ...         if self.middlename:
+    ...             value += ' ' + self.middlename
+    ...         value += ' ' + self.lastname
+    ...         return value
+
+Classes (4)
+===========
+
+::
+
+    >>> me = Person('Daniel', 'Nouri')
+    >>> john = Person('John', 'Cleese')
+    >>> michael = Person(
+    ...     'Michael', 'Palin', 'Abraham')
+
+Classes (5)
+===========
+
+::
+
+    >>> me.firstname
+    'Daniel'
+    >>> me.middlename
+    ''
+    >>> me.fullname()
+    'Daniel Nouri'
+    >>> michael.fullname()
+    'Michael Abraham Palin'
+
+Classes (6)
+===========
+
+::
+
+    >>> persons = [john, me, michael]
+    >>> persons.sort()
+
+    <<< persons[0].lastname
+    'Nouri'
+    <<< persons[1].lastname
+    'Cleese'
+    <<< persons[2].lastname
+    'Palin'
+
+Classes (6)
+===========
+
+::
+
+    >>> class SortablePerson(Person):
+    ...     def __lt__(self, other):
+    ...         return self.lastname < other.lastname
+
+Classes (7)
+===========
+
+::
+
+    >>> SP = SortablePerson
+    >>> persons = [
+    ...     SP('John', 'Cleese'),
+    ...     SP('Daniel', 'Nouri'),
+    ...     SP('Michael', 'Palin', 'Abraham'),
+    ... ]
+
+Classes (8)
+===========
+
+::
+
+    >>> persons.sort()
+    >>> persons[0].fullname()
+    'John Cleese'
+    >>> persons[1].fullname()
+    'Daniel Nouri'
+    >>> persons[2].fullname()
+    'Michael Abraham Palin'
+

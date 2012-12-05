@@ -1,0 +1,257 @@
+================================================
+Useful tools for working with Python and the web
+================================================
+
+:Version: 0.1 of 08.12.2009
+:Author: Daniel Nouri
+
+.. contents::
+.. include:: <s5defs.txt>
+
+pdb
+===
+
+- pdb stands for *Python debugger*
+- part of the standard library
+- works a lot like gdb, the *GNU debugger*
+
+pdb (2)
+=======
+
+A little program *(guess.py)*::
+
+  number = 23
+  guess = raw_input('Guess a number: ')
+  if guess == number:
+      print 'You guessed it!'      
+  elif guess < number:
+      print 'Too small'
+  else:
+      print 'Too big'
+
+pdb (3)
+=======
+
+Let's save this as ``guess.py`` and run it::
+
+  python guess.py
+
+Something's wrong!  We can use the pdb to step through the script::
+
+  pdb guess.py
+
+pdb (4)
+=======
+
+The Python debugger puts us at the first line of the script and waits
+for our input::
+
+  -> number = 23
+  (Pdb)
+
+pdb (5)
+=======
+
+The ``list`` or ``l`` command shows us an excerpt of the code, and
+where we currently are::
+
+  (Pdb) l
+
+pdb (6)
+=======
+
+Let's go to the next line by issuing the ``next`` (short: ``n``)
+command::
+
+  (Pdb) n
+  > .../guess.py(2)<module>()
+  -> guess = raw_input('Guess a number: ')
+  (Pdb)
+
+Try ``l`` again; you'll see how the cue has moved down one line!
+
+pdb (7)
+=======
+
+Nothing seems wrong until now, so we go to the next line.  Note that
+it's our script that's waiting for input now.  Let's put ``23``::
+
+  (Pdb) n
+  Guess a number: 23
+
+pdb (8)
+=======
+
+We can use any Python expression in the pdb and see the result::
+
+  > .../guess.py(4)<module>()
+  -> if guess == number:
+  (Pdb) number
+  23
+  (Pdb) guess
+  '23'
+
+pdb (9)
+=======
+
+We can now quit the pdb and our script by issuing the ``quit``
+command::
+
+  (Pdb) quit
+
+pdb (10)
+========
+
+Most of the time it's more practical to "put the pdb" at some point in
+the code and then introspect the state.  Let's put this line into our
+script::
+
+  import pdb; pdb.set_trace()
+
+When we're done with debugging, we can use ``continue`` (short: ``c``)
+to continue execution.
+
+pdb (11)
+========
+
+Built-in help is available via ``help`` and ``help <topic>``.  Other
+useful commands:
+
+- ``where`` (``w``) for looking at the stack
+
+- ``break`` (``b``) for setting a break point
+
+pdb (12)
+========
+
+**Caveat**: If the variable name you want to look at is the same as a
+pdb command, you'll need to escape with an exclamation mark ``!``::
+
+  (Pdb) !where
+  u'Mars'
+
+Exercise: Extend guess.py
+=========================
+
+Extend our ``guess.py`` example to allow for a number of guesses.  At
+the end, print the number of guesses and the amount of time it took
+the user to guess the right number.
+
+Look at ``random`` for creating a random number, and look at ``time``
+for calculating the time.
+
+setuptools
+==========
+
+- the standard way of packaging and installing packages in Python
+
+- like Debian package management system (dpkg), or CPAN for Perl
+
+- features dependency management, convenient installation of packages
+  on PyPI, and many more things
+
+setuptools (2)
+==============
+
+To install on Debian/Ubuntu::
+
+  $ apt-get install python-setuptools
+
+Otherwise::
+
+  http://pypi.python.org/pypi/setuptools#installation-instructions
+
+setuptools (3)
+==============
+
+You should now have a script called ``easy_install``, which you can
+use like so to install hundreds of Python libraries with one command::
+
+  $ easy_install FormAlchemy
+
+but hang on...
+
+virtualenv
+==========
+
+When you do ``import bla``, Python tries to look up ``bla`` in a few
+places.  These places are defined in ``sys.path``::
+
+  >>> import sys
+  >>> sys.path
+  ['', '/usr/lib/python2.6',
+   '/usr/lib/python2.6/plat-linux2', '...']
+
+virtualenv (2)
+==============
+
+If you want to make new libraries available to your Python, you need
+to put them somewhere into this ``sys.path``.  There's two problems
+with that:
+
+- no multiple versions of one lib
+
+- don't want to mess with system Python
+
+virtualenv (3)
+==============
+
+``virtualenv`` is a tool to create isolated Python environments.  To
+install:
+
+- on Debian/Ubuntu, do ``apt-get install python-virtualenv``
+
+- anywhere else, do ``sudo easy_install virtualenv``
+
+virtualenv (4)
+==============
+
+Let's try it out::
+
+  $ virtualenv ~/my-sandbox
+  New python executable in /home/daniel/my-sandbox/bin/python
+  Installing setuptools............done.
+  $ ~/my-sandbox/bin/python 
+  Python 2.6.2 (release26-maint, Apr 19 2009, 01:56:41) 
+
+virtualenv (5)
+==============
+
+Now we can install any package from the PyPI into our sandbox, like
+``python-ldap``::
+
+  $ ~/my-sandbox/bin/easy_install python-ldap
+  ...
+  $ ~/my-sandbox/bin/python
+  ...
+  >>> import ldap
+
+pyflakes
+========
+
+Pyflakes is a simple program that checks Python source files for
+errors.
+
+To install on Debian/Ubuntu::
+
+  $ apt-get install pyflakes
+
+Otherwise::
+
+  $ easy_install pyflakes
+
+doctests
+========
+
+Why automated tests:
+
+- manual testing is tedious
+- manual testing is errorenous
+- your software may work today, what about tomorrow?
+
+doctests (2)
+============
+
+The ``doctest`` module in the standard library helps you to write
+tests very easily.  You keep your documentation correct at the same
+time.
