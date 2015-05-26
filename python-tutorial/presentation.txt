@@ -26,7 +26,7 @@ This tutorial is mostly borrowing from:
 
 Also useful:
 
-- Dive into Python book: http://diveintopython.org
+- Dive into Python book: http://www.diveintopython.net
 
 Interactive mode
 ================
